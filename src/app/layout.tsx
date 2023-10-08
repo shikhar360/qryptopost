@@ -16,6 +16,7 @@ import {
 
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
+import Navbar from './_components/Navbar';
 
 const { chains, publicClient } = configureChains(
   [polygonMumbai],
@@ -48,6 +49,7 @@ export default function RootLayout({
       <body className={"bg-white text-black "}>
       <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains}>
+      <Navbar/>
         {children}
         </RainbowKitProvider>
         </WagmiConfig>

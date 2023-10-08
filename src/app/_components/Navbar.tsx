@@ -1,9 +1,89 @@
-import React from 'react'
+'use client'
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+// import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-const Navbar = () => {
+// import { useAccount } from "wagmi";
+
+export default function Navbar() {
+  const [isActive, setIsActive] = useState(false);
+
   return (
-    <div>Navbar</div>
-  )
-}
+    <nav className=" z-50 w-[96%] md:w-[90%] bg-[#661EFE] backdrop-blur-md  font-jakarta  text-white  p-2  text-lg flex items-center justify-between transition-all duration-300 ease-linear fixed top-2 left-1/2 -translate-x-1/2 md:rounded-full rounded-3xl border border-white ">
 
-export default Navbar
+      <div className=" md:w-60  cursor-pointer flex  self-start items-center  px-2 justify-center rounded-md ">
+          <Link href={"/"} className={`flex items-center  `}>
+           <img src="/img/logo.png" alt="logo" className={`w-12`}  />
+            <p className=" cursor-pointer transition-all duration-200 ease-linear  bg-transparent  py-1 px-4 rounded-md text-center   ">
+            Qryptopost
+            </p>
+          </Link>
+      </div>
+
+      <div
+        className={`    flex items-end  justify-end md:justify-between md:w-full flex-col md:flex-row `}
+      >
+        <div
+          className=" px-6 flex items-center justify-center cursor-pointer transition-all duration-300 ease-linear p-1 rounded-full md:hidden "
+          onClick={() => setIsActive((prev: boolean) => !prev)}
+        >
+          {!isActive ? (
+            <img
+              src="/img/menu.png"
+              alt="menu"
+              width={"38"}
+              className={` duration-100 transition-all ease-linear`}
+            />
+          ) : (
+            <img
+              src="/img/plus.png"
+              alt="menu"
+              width={"38"}
+              className={` duration-100 transition-all ease-linear rotate-45`}
+            />
+          )}
+        </div>
+
+        <div
+          className={` ${
+            isActive
+              ? "flex flex-col  md:flex-row my-auto gap-2 items-center justify-center "
+              : " hidden md:flex md:items-center md:justify-center my-auto   gap-2  text-base"
+          }`}
+        >
+
+
+          <Link
+            href={`/`}
+          >
+            <p className=" cursor-pointer transition-all duration-200 ease-linear    px-4  rounded-md text-center ">
+            Dashboard
+            </p>
+          </Link>
+          <Link href={"/"}>
+            <p className=" cursor-pointer transition-all duration-200 ease-linear    px-4 rounded-md text-center   ">
+              Home
+            </p>
+          </Link>
+          {/* <ConnectButton/> */}
+        </div>
+
+         <div
+          className={` md:pr-5 ${
+            isActive
+              ? "flex flex-col  my-2 mx-auto  "
+              : " hidden md:flex md:items-center md:justify-center  my-auto "
+          }`}
+        >
+            <Link href={"/"}>
+              <p className=" cursor-pointer transition-all duration-200 ease-linear  bg-transparent  rounded-md text-center   ">
+               Login
+              </p>
+            </Link>
+
+          {/* <ConnectKitButton /> */}
+        </div> 
+      </div>
+    </nav>
+  );
+}
