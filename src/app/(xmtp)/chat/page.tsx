@@ -32,7 +32,7 @@ const Chat = () => {
 
   return (
     <div>
-      <button onClick={()=>initXmtp()}>Connect to XMTP</button>
+      {/* <button onClick={()=>()}>Connect to XMTP</button> */}
     </div>
   )
 }

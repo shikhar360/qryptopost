@@ -4,10 +4,9 @@ import * as LitJsSdk from '@lit-protocol/lit-node-client';
 import { AccsDefaultParams, AuthSig, AuthCallback } from "@lit-protocol/types";
 const Lit = () => {
 
-    // const client = new LitJsSdk.LitNodeClient({
-    //     litNetwork: "cayenne",
-    //     debug: false
-    // });
+    const client = new LitJsSdk.LitNodeClient({
+        litNetwork: "cayenne"
+    });
 
 
 
