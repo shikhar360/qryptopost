@@ -73,7 +73,7 @@ export default function Navbar() {
               : " hidden md:flex md:items-center md:justify-center  my-auto "
           }`}
         >
-            <Link href={"/"}>
+            <Link href={"/Login"}>
               <p className=" cursor-pointer transition-all duration-200 ease-linear  bg-transparent  rounded-md text-center   ">
                Login
               </p>
