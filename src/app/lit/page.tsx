@@ -45,7 +45,7 @@ const Lit = () => {
 
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-white text-black p-24" >Lit</div>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white text-white p-24" >Lit</div>
   )
 }
 

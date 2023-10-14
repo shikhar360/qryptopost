@@ -34,17 +34,13 @@ const FAQ = () => {
     <div
       className={`min-h-[80vh] w-[90%] mx-auto flex flex-col text-white py-20 items-center justify-center pt-40`}
     >
-      <img
-        src={'/asset/landing/faq.png'}
-        alt="icon"
-        className={` invert mix-blend-screen  transition-all duration-300 ease-linear w-[30rem]   `}
-      />
-      <p className="text-4xl text-black w-full text-center pb-10">Still Have Questions ?</p>
+    
+      <p className="text-4xl text-white w-full text-center pb-10">Still Have Questions ?</p>
       <div className=" mx-auto  text-white md:w-[40%] w-[80%]  overflow-hidden py-4 rounded-xl   ">
         {faqData.map((item, index) => (
           <div
             key={index}
-            className=" rounded-3xl my-4 bg-[#661EFE] select-none py-2 px-4 "
+            className=" rounded-3xl my-4 bg-[#8338ec] select-none py-2 px-4 "
           >
             <div
               className="cursor-pointer flex items-center justify-between"

@@ -1,11 +1,12 @@
 "use client"
 import './globals.css'
 import type { Metadata } from 'next'
-
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import '@rainbow-me/rainbowkit/styles.css';
 
 import {
+  darkTheme,
   getDefaultWallets,
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
@@ -46,13 +47,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={"bg-white text-black "}>
+      <body className={"bg-black  scrollbar-hide "}>
+      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_ID as string}>
       <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains}>
+      <RainbowKitProvider chains={chains} theme={darkTheme({
+        accentColor: '#8338ec',
+        accentColorForeground: 'white',
+      })}>
       <Navbar/>
         {children}
         </RainbowKitProvider>
         </WagmiConfig>
+        </GoogleOAuthProvider>
         </body>
     </html>
   )

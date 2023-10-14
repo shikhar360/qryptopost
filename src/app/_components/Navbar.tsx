@@ -7,12 +7,12 @@ export default function Navbar() {
   const [isActive, setIsActive] = useState(false);
 
   return (
-    <nav className=" z-50 w-[96%]  md:w-[80%] bg-[#661EFE] backdrop-blur-md  font-jakarta  text-white  p-2  text-lg flex items-center justify-between transition-all duration-300 ease-linear fixed top-2 left-1/2 -translate-x-1/2 md:rounded-full rounded-3xl border border-white ">
+    <nav className=" z-50 w-[96%]  md:w-[80%] bg-transparent backdrop-blur-md  font-jakarta    p-2  text-lg flex items-center justify-between transition-all duration-300 ease-linear fixed top-2 left-1/2 -translate-x-1/2 rounded-xl text-[#c497ff] ">
 
       <div className=" md:w-60  cursor-pointer flex  self-start items-center  px-2 justify-center rounded-md ">
-          <Link href={"/"} className={`flex items-center  `}>
-           <img src="/img/logo.png" alt="logo" className={`w-12`}  />
-            <p className=" cursor-pointer transition-all duration-200 ease-linear  bg-transparent  py-1 px-4 rounded-md text-center   ">
+          <Link href={"/"} className={`flex items-center   `}>
+           {/* <img src="/img/logo.png" alt="logo" className={`w-12`}  /> */}
+            <p className=" cursor-pointer transition-all duration-200 ease-linear  bg-transparent  py-1.5 px-4 rounded-md text-center   ">
             Qryptopost
             </p>
           </Link>
@@ -63,18 +63,18 @@ export default function Navbar() {
               Home
             </p>
           </Link>
-          <ConnectButton/>
         </div>
 
          <div
           className={` md:pr-5 ${
             isActive
-              ? "flex flex-col  my-2 mx-auto  "
-              : " hidden md:flex md:items-center md:justify-center  my-auto "
+            ? "flex flex-col  my-2 mx-auto  "
+            : " hidden md:flex md:items-center md:justify-center md:gap-4 my-auto "
           }`}
-        >
+          >
+          <ConnectButton/>
             <Link href={"/Login"}>
-              <p className=" cursor-pointer transition-all duration-200 ease-linear  bg-transparent  rounded-md text-center   ">
+              <p className="  transition-all duration-200 ease-linear  cursor-pointer bg-transparent  rounded-md text-center   ">
                Login
               </p>
             </Link>

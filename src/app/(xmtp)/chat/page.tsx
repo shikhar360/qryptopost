@@ -134,7 +134,7 @@ const Chat =  () => {
 
   return (
     <XMTPProvider>
-    <div className="flex min-h-screen flex-col items-center justify-center bg-white text-black p-24">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white text-white ">
       <div  onClick={()=>initXmtp()}>{xmtpClient ? "connected to xmtp" : "Connect to XMTP"}</div>
       <button onClick={()=>check()}>check if can message or not</button>
       <button onClick={()=>seeMess()}>seemess</button>

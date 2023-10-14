@@ -35,7 +35,7 @@ const Powered = () => {
         Powered By
       </h1>
       <div
-        className={` md:w-[60%] w-[80%] overflow-hidden mx-auto bg-white md:rounded-3xl rounded-3xl    `}
+        className={` md:w-[60%] w-[80%] overflow-hidden mx-auto bg-black md:rounded-3xl rounded-3xl    `}
       >
         <div
           className={`h-max overflow-x-hidden w-max flex group font-mono text-sm  group z-20 mx-auto select-none   `}
