@@ -31,7 +31,7 @@ const Hero = () => {
                Continue With WALLET
               </p>
             </Link>
-            <Link href={"/Login/Gmail"}>
+            <Link href={"/login/gmail"}>
               <p className=" border border-[#b294ff] px-4 py-2 rounded-xl transition-all duration-200 ease-linear  cursor-pointer bg-transparent   text-center   ">
                Continue With Email
               </p>

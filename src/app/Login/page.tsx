@@ -4,7 +4,7 @@ import { Database, Metadata } from "@tableland/sdk";
 import {  useAccount } from "wagmi";
 import Link from "next/link";
 import { ToastContainer, toast, Flip } from 'react-toastify';
-import { createUserInbox , createReplybox, grantInsert , createsubscribe } from "./utils";
+import { createUserInbox , createReplybox, grantInsert , createsubscribe } from "./utilities";
 import { useStore } from "@/store/Store"
 interface IData {
   name : string
@@ -146,7 +146,7 @@ const Login = () => {
        Continue With Wallet
       </button>
       <span> OR</span>
-      <Link href={`/Login/Gmail`}
+      <Link href={`/login/gmail`}
         // onClick={() => }
         className="border-[#661EFE] border-2  py-1 px-4 w-[50%] mx-auto my-3 hover:-translate-y-2 hover:shadow-xl hover:shadow-violet-800 rounded-xl text-center transition-all duration-150 ease-linear"
         >
