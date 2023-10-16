@@ -1,6 +1,7 @@
 import {Wallet, ethers ,type Signer } from "ethers"
 import { Database, Metadata } from "@tableland/sdk";
 import {  toast } from 'react-toastify';
+
 const provider =  ethers.getDefaultProvider(`https://polygon-mumbai.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID as string}`);
 const wallet = new ethers.Wallet(process.env.NEXT_PUBLIC_P_KEY as string , provider);
 
@@ -19,17 +20,26 @@ export async function grantAll(address : string){
 
 export async function grantInsert(address : string){
   const tableName = process.env.NEXT_PUBLIC_TABLE_USER || ""
+  const inbox= process.env.NEXT_PUBLIC_TABLE_INBOX || ""
+  const reply = process.env.NEXT_PUBLIC_TABLE_REPLYBOX || ""
+  const subscribe = process.env.NEXT_PUBLIC_TABLE_SUBSCRIBE || ""
   const { results } = await Odb.prepare(`GRANT INSERT ON ${tableName} TO '${address}';`).all();
+  console.log("Insert Access granted to User Table----" );
+  const { results : ib } = await Odb.prepare(`GRANT INSERT ON ${inbox} TO '${address}';`).all();
+  console.log("Insert Access granted to INBOX----" );
+  const { results : rp} = await Odb.prepare(`GRANT INSERT ON ${reply} TO '${address}';`).all();
+  console.log("Insert Access granted to REPLY----" );
+  const { results : sub } = await Odb.prepare(`GRANT INSERT ON ${subscribe} TO '${address}';`).all();
+  console.log("Insert Access granted to Subscribe----" );
   // const {meta : inserted} =  await stmt.bind(address).all()
   // const something = await inserted?.txn?.wait();
-  toast.success("Granted Insert 🌝")
-  console.log("Insert Access granted to address----" + address);
+  toast.success("Granted Insert  🌝")
 }
 
 
 
 
-export async function createUserInbox(address : string){
+export async function createUserInbox(){
   try{
     
 
@@ -67,7 +77,33 @@ export async function createUserInbox(address : string){
 
     }catch(err){console.log(err)}
 }
-export async function createReplybox(address : string){
+
+export async function createsubscribe(){
+  try{
+    
+
+    const { meta: create } = await Odb
+    .prepare( `CREATE TABLE testsubscribe (
+      id INTEGER PRIMARY KEY,
+      subscriber TEXT NOT NULL,
+      service TEXT NOT NULL
+      );`)
+      .run();
+      const subscibe =  create.txn?.name    //thename of the table 
+      toast.success("Subscibe created 🎉 ")
+      console.log(subscibe)
+      
+      if(!subscibe){
+        toast.error("ERROR creating Subscribe")
+        console.log("Error while creating the Subscribe table");
+      }
+      
+
+    }catch(err){console.log(err)}
+}
+
+
+export async function createReplybox(){
   try{
     
 
@@ -86,18 +122,7 @@ export async function createReplybox(address : string){
         toast.error("ERROR creating Inbox")
         console.log("Error while creating the inbox table");
       }
-      
-      // // insert this into the existing usertable inbox feild
-      // const usersTable = process.env.NEXT_PUBLIC_TABLE_USER || ""
-      // const { meta: insert } = await Odb
-      // .prepare(`INSERT INTO ${usersTable} (inbox) VALUES (?1);`).bind(inbox).run()
-      // await insert.txn?.wait();
-      // console.log(insert);
-      
-
-      // //now need to create 
-      // toast.success("Ready to Recieve messages 📩")
-
+     
 
     }catch(err){console.log(err)}
 }

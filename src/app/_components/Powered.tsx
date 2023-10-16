@@ -6,6 +6,9 @@ const Powered = () => {
     '/img/wagmi.png',
     '/img/rainbow.png',
     '/img/tableland.png',
+    '/img/lit.png',
+    '/img/mask.png',
+    '/img/xmtp.png',
   ]
 
   function marq(data: string[]) {

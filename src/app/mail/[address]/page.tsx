@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { AccsDefaultParams, AuthSig, AuthCallback } from "@lit-protocol/types";
 import { useSearchParams } from "next/navigation";
+import { useStore } from "@/store/Store"
+import { Database, Metadata } from "@tableland/sdk";
+import { ToastContainer, toast, Flip } from 'react-toastify';
 
 interface IMail {
   sender: string;
@@ -17,15 +20,62 @@ const Sendbox = ({ params }: { params: { address: string } }) => {
   //     litNetwork: "cayenne"
   // });
   const searchParams = useSearchParams();
-
   const receiver = searchParams.get("receiver");
+  const address = useStore((state)=> state.ethAddr)
+  const db = new Database();
+  const inbox= process.env.NEXT_PUBLIC_TABLE_INBOX || ""
 
   // {params.address}  needd to check the user maybe set the global state with zustand
 
   async function sendMail(mail: IMail) {
     // check if the usr is on the table if not then create one or if yes then send the messge
-    //  if yesthen send him the inbox
+
+  //  need to check if the user is you before sending
+    try{
+
+      if (mail.sender !== address){
+        toast.error("Enter your connected Wallet Address")
+        return
+      }
+      //  if yesthen send him the inbox
+      const date = new Date()
+      const caldate = new Date().toLocaleDateString();
+      const time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+      const sendedAt = caldate+" "+time
+      const stmt =  db.prepare(
+        `INSERT INTO ${inbox} (sender, receiver, time, subject, content, replies) VALUES (?1, ?2, ?3, ?4, ?5, ?6)`
+        )
+        await stmt.bind(mail.sender , mail.receiver , sendedAt, mail.subject, mail.content , "" ).all()
+        //  const something = await inserted?.txn?.wait();
+        // console.log({something , inserted});
+        toast.success("Mail sent Successfully  🎉 ")
+      }catch(err){console.log(err)}
   }
+
+
+
+  async function replying (){
+
+  }
+  // sender TEXT NOT NULL,
+  // receiver TEXT NOT NULL,
+  // time TEXT NOT NULL,
+  // subject TEXT NOT NULL,
+  // content TEXT NOT NULL,
+  // replies TEXT
+// 0x3aD7CBc5927a40ab90c2cEAEdD8Bf2489B2659C4
+
+async function test (){
+  try{
+    // const date = new Date()
+    // const caldate = new Date().toLocaleDateString();
+    // const time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    // console.log(caldate+" "+time);
+    console.log(address);
+    const { results } = await db.prepare(`SELECT * FROM ${inbox} WHERE receiver = ?;`).bind(address).all();
+    console.log(results[0]);
+  }catch(err){console.log(err)}
+}
 
   const [data, setData] = useState<IMail>({
     sender: params.address || "",
@@ -44,7 +94,9 @@ const Sendbox = ({ params }: { params: { address: string } }) => {
       };
     });
   }
+  
 
+  //
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-24">
       <div
@@ -96,19 +148,26 @@ const Sendbox = ({ params }: { params: { address: string } }) => {
         <div  className={`flex items-start  gap-4 justify-start w-full mx-8 `}>
 
         <button
-
+      onClick={()=>sendMail(data)}
         className="bg-[#8338ec] text-white py-2 px-4   my-3 hover:-translate-y-1 hover:shadow-xl hover:shadow-black rounded-r-full transition-all duration-150 ease-linear"
         >
        Send Encrypted 🔥
       </button>
         <button
-
+         onClick={()=>test()}
         className="border-[#8338ec] border text-white py-2 px-4   my-3 hover:-translate-y-1 hover:shadow-xl hover:shadow-black rounded-r-full transition-all duration-150 ease-linear"
         >
        Send 
       </button>
           </div>
       </div>
+      <ToastContainer
+        position="bottom-right"
+        theme="dark"
+        autoClose={3000}
+        hideProgressBar={true}
+        transition={Flip}
+        />
     </div>
   );
 };

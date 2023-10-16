@@ -4,8 +4,8 @@ import { Database, Metadata } from "@tableland/sdk";
 import {  useAccount } from "wagmi";
 import Link from "next/link";
 import { ToastContainer, toast, Flip } from 'react-toastify';
-import { createUserInbox , createReplybox, grantInsert } from "./utils";
-
+import { createUserInbox , createReplybox, grantInsert , createsubscribe } from "./utils";
+import { useStore } from "@/store/Store"
 interface IData {
   name : string
   email : string
@@ -15,14 +15,10 @@ interface IData {
 
 
 const Login = () => {
-  const [eth , setEth]= useState<string>('')
-  const { address, isConnected } = useAccount()
 
-  useEffect(()=>{
-   if(isConnected){
-    setEth(address as string)
-   }
-  },[])
+  const address = useStore((state)=> state.ethAddr)
+
+ 
   // const publicClient = usePublicClient();
   // const { data: walletclient } = useWalletClient();  //so called signer of the user currently using
 
@@ -129,15 +125,16 @@ const Login = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-black text-white p-24">
      
-      <button onClick={()=>createUserInbox("jghsd")}>Insert</button>
-      <button onClick={()=>createReplybox("jghsd")}>reolybox</button>
+      <button onClick={()=>createUserInbox()}>Insert</button>
+      <button onClick={()=>createReplybox()}>reolybox</button>
+      <button onClick={()=>createsubscribe()}>subscribe</button>
       {/* <button onClick={()=>getAll()}>read</button> */}
       {/* <button onClick={()=>granting(address as string)}>GRANt</button> */}
   <p> </p>
    <div className="md:w-[60%] w-[95%] bg-stone-800 flex flex-col items-center justify-start px-4 py-8 rounded-xl shadow-lg shadow-black/120"> 
 
       <p onClick={()=>getAll()} className="text-white mb-8 text-start text-2xl  w-[80%]  px-4  rounded-sm h-8 "> Signup</p>
-      {eth ? <p className="text-white mb-2 text-start text-sm  w-[80%]  px-4 truncate rounded-sm h-8 "> Eth Address : {eth}</p> : <p>Connect your wallet </p>}
+      {address ? <p className="text-white mb-2 text-start text-sm  w-[80%]  px-4 truncate rounded-sm h-8 "> Eth Address : {address}</p> : <p>Connect your wallet </p>}
       <input onChange={handledata} type="text" placeholder="name   (optional)" name="name" className="text-white mb-2 bg-stone-800 focus:outline-none text-start text-sm  w-[80%]  px-4  rounded-sm h-8 "/>
       <input onChange={handledata} type="text" placeholder="tom@gmail.com  (optional)" name="email" className="text-white bg-stone-800 focus:outline-none mb-2 text-start text-sm  w-[80%]  px-4  rounded-sm h-8 "/>
       <input onChange={handledata} type="text" placeholder="+62-2121-306-919  (optional)" name="phone" className="text-white bg-stone-800 mb-2 focus:outline-none text-start text-sm  w-[80%]  px-4  rounded-sm h-8 "/>
