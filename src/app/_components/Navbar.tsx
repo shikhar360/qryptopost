@@ -2,9 +2,21 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import {  useAccount } from "wagmi";
+import { useStore } from "@/store/Store";
 
 export default function Navbar() {
   const [isActive, setIsActive] = useState(false);
+
+  const setAddr = useStore(state => state.setEthAddr)  
+  const { address, isConnected } = useAccount()
+
+  useEffect(()=>{
+   if(isConnected){
+    // setEth(address as string)
+    setAddr(address as string);
+   }
+  },[])
 
   return (
     <nav className=" z-50 w-[96%]  md:w-[80%] bg-transparent backdrop-blur-md  font-jakarta    p-2  text-lg flex items-center justify-between transition-all duration-300 ease-linear fixed top-2 left-1/2 -translate-x-1/2 rounded-xl text-[#c497ff] ">

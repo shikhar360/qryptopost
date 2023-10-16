@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import '@rainbow-me/rainbowkit/styles.css';
-
+import 'react-toastify/dist/ReactToastify.css';
 import {
   darkTheme,
   getDefaultWallets,
