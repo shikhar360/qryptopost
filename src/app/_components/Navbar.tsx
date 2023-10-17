@@ -8,14 +8,18 @@ import { useStore } from "@/store/Store";
 export default function Navbar() {
   const [isActive, setIsActive] = useState(false);
 
-  const setAddr = useStore(state => state.setEthAddr)  
   const { address, isConnected } = useAccount()
+  
+  const setAddr = useStore(state => state.setEthAddr)  
+  //  useEffect(()=>{
 
+    //  if(isConnected){
+    //   // setEth(address as string)
+    //   setAddr(address as string);
+    //   // console.log("Wallet connected");
+    //  }
 
-   if(isConnected){
-    // setEth(address as string)
-    setAddr(address as string);
-   }
+  //  },[])
 
 
   return (
@@ -85,7 +89,7 @@ export default function Navbar() {
           }`}
           >
           <ConnectButton/>
-            <Link href={"/Login"}>
+            <Link href={"/login"}>
               <p className="  transition-all duration-200 ease-linear  cursor-pointer bg-transparent  rounded-md text-center   ">
                Login
               </p>

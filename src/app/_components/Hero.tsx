@@ -5,9 +5,9 @@ const Hero = () => {
   return (
     <div 
      
-    className=" w-[100vw] h-[100vh] flex items-center justify-center overflow-hidden relative ">
+    className=" w-[100vw] h-[100vh] flex items-center justify-centeroverflow-hidden relative ">
        <video
-         className={`w-[100vw] h-[100vh] hue-rotate-30  `}
+         className={`w-[100vw] h-[100vh] hue-rotate-30  object-fill  `}
          autoPlay
          loop
          muted
@@ -15,7 +15,7 @@ const Hero = () => {
          <source
            src={"/img/hole.mp4"}
            type="video/mp4"
-           className={``}
+           className={`object-fill`}
            height={100}
          />
        </video>

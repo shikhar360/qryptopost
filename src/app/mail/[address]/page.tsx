@@ -24,7 +24,7 @@ const Sendbox = ({ params }: { params: { address: string } }) => {
   const address = useStore((state)=> state.ethAddr)
   const db = new Database();
   const inbox= process.env.NEXT_PUBLIC_TABLE_INBOX || ""
-
+  
   // {params.address}  needd to check the user maybe set the global state with zustand
 
   async function sendMail(mail: IMail) {
@@ -173,3 +173,5 @@ async function test (){
 };
 
 export default Sendbox;
+
+// export default dynamic (() => Promise.resolve(App), {ssr: false})
