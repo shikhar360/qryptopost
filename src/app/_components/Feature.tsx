@@ -2,7 +2,7 @@ import React from 'react'
 
 const Feature = () => {
   return (
-    <div className={`w-[90%] min-h-screen pt-40 mx-auto`}>
+    <div className={`w-[90%] min-h-screen pt-40 mx-auto  bg-black`}>
       <p className={` text-4xl font-bold text-center`}>Meet the Future of Emailing</p>
       <div className={`grid grid-cols-3 mt-20`}>
         <div className={`w-[80%] h mx-auto shadow-lg shadow-black/10 rounded-xl flex flex-col items-center justify-start px-8 py-10 `}> 

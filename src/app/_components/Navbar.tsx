@@ -74,9 +74,16 @@ export default function Navbar() {
             Mails
             </p>
           </Link>
-          <Link href={"/"}>
+          <Link
+            href={`/`}
+          >
+            <p className=" cursor-pointer transition-all duration-200 ease-linear    px-4  rounded-md text-center ">
+            Marketers
+            </p>
+          </Link>
+          <Link href={"/invite"}>
             <p className=" cursor-pointer transition-all duration-200 ease-linear    px-4 rounded-md text-center   ">
-              Home
+             Invite
             </p>
           </Link>
         </div>

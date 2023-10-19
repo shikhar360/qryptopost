@@ -1,30 +1,59 @@
 "use client";
 import React, { useEffect, useState }  from "react";
 import { Database, Metadata } from "@tableland/sdk";
-import {  useAccount } from "wagmi";
+import {  useAccount  } from "wagmi";
 import Link from "next/link";
 import { ToastContainer, toast, Flip } from 'react-toastify';
-import { createUserInbox , createReplybox, grantInsert , createsubscribe } from "./utilities";
+import { createUserInbox , createReplybox, grantInsert , createsubscribe  , clearall} from "./utilities";
 import { useStore } from "@/store/Store"
+import Loading from "../_components/Loading";
+import {ethers} from "ethers"
 interface IData {
   name : string
   email : string
   phone : string
 }
-
-
+import { XMTPProvider } from "@xmtp/react-sdk";
+import {
+  Client,
+  useStreamMessages,
+  useClient,
+  useMessages,
+  useConversations,
+  useCanMessage,
+  useStartConversation,
+  useStreamAllMessages,
+  DecodedMessage,
+  useStreamConversations,
+  Conversation,
+} from "@xmtp/react-sdk";
 
 const Login = () => {
 
-  const address = useStore((state)=> state.ethAddr)
+  // const address = useStore((state)=> state.ethAddr)
+  const [isDisabled , setIsDisabled] = useState<boolean>(false)
+  const [address , setAddress] = useState<string>('')
+  const {address :addr , isConnected} = useAccount()
+  
+  
+  const provider = new ethers.providers.JsonRpcProvider( )
+  const signer = provider.getSigner()
+  
+  const setclient = useStore((state)=> state.setXMTP)
 
+  useEffect(()=>{
+    if(!addr)return
+    setAddress(addr as string)
+  },[])
+  // console.log(address);
  
   // const publicClient = usePublicClient();
   // const { data: walletclient } = useWalletClient();  //so called signer of the user currently using
-
   
-//  const signer = wallet.connect(provider) as Partial<ReadConfig & SignerConfig> & Partial<AutoWaitConfig>
- 
+  
+  //  const signer = wallet.connect(provider) as Partial<ReadConfig & SignerConfig> & Partial<AutoWaitConfig>
+  
+  const { initialize } = useClient();
 
   const db = new Database();
 
@@ -66,9 +95,20 @@ const Login = () => {
       toast.error("Please connect your Wallet 😅")
       return
     }
+
+    setIsDisabled(true)
     //check if the user is on the usertable or not
-    // const { results } = await db.prepare(`SELECT * FROM ${usersTable} WHERE ethAddress = ?;`).bind(address).all(); //this need somewhere else
+    const isalready : { ethAddress?: string } = await db.prepare(`SELECT ethAddress FROM ${usersTable} WHERE ethAddress = ?;`).bind(address).first(); //this need somewhere else
     // console.log(results); 
+
+    // console.log(isalready);
+    
+    if(isalready?.ethAddress ){
+      toast("User with this Address already present 🤝")
+      setIsDisabled(false)
+
+      return
+    }
     // if the user is present we need to give all access  to create the inbox 
     
 
@@ -89,8 +129,9 @@ const Login = () => {
         const something = await inserted?.txn?.wait();
         // console.log({something , inserted});
         toast.success("Inserted Successfully  🎉 ")
-
-
+        initXmtp()
+        setIsDisabled(false)
+ 
   //  console.log(results);
   }
 
@@ -122,13 +163,21 @@ const Login = () => {
  }
 
 
+ const initXmtp = async () => {
+  const xmtpclient =  await initialize({ signer });
+  setclient(xmtpclient)
+  // setXmtp(xmtpclient)
+};
+
   return (
+    <XMTPProvider>
+    
     <div className="flex min-h-screen flex-col items-center justify-center bg-black text-white p-24">
-     
+{/*      
       <button onClick={()=>createUserInbox()}>Insert</button>
       <button onClick={()=>createReplybox()}>reolybox</button>
-      <button onClick={()=>createsubscribe()}>subscribe</button>
-      {/* <button onClick={()=>getAll()}>read</button> */}
+      <button onClick={()=>createsubscribe()}>subscribe</button> */}
+      {/* <button onClick={()=>clearall()}>clear</button> */}
       {/* <button onClick={()=>granting(address as string)}>GRANt</button> */}
   <p> </p>
    <div className="md:w-[60%] w-[95%] bg-stone-800 flex flex-col items-center justify-start px-4 py-8 rounded-xl shadow-lg shadow-black/120"> 
@@ -140,17 +189,18 @@ const Login = () => {
       <input onChange={handledata} type="text" placeholder="+62-2121-306-919  (optional)" name="phone" className="text-white bg-stone-800 mb-2 focus:outline-none text-start text-sm  w-[80%]  px-4  rounded-sm h-8 "/>
       <button
         // onClick={() => insertfake(data)}
+        disabled ={isDisabled}
         onClick={() => register(data)}
-        className="bg-[#8338ec] text-white py-1 px-4 w-[50%] mx-auto my-3 mt-6 hover:-translate-y-2 hover:shadow-xl hover:shadow-violet-800 rounded-xl transition-all duration-150 ease-linear"
+        className="bg-[#8338ec] text-white py-1 px-4 w-[50%] mx-auto my-3 mt-6 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/50 rounded-xl transition-all duration-150 ease-linear"
         >
-       Continue With Wallet
+        {isDisabled ? <div className={"flex items-center justify-center"}><Loading simple={true} w={"w-5"}  /> {"Wait for a bit .."} </div>: "Continue With Wallet"}
       </button>
       <span> OR</span>
       <Link href={`/login/gmail`}
         // onClick={() => }
-        className="border-[#661EFE] border-2  py-1 px-4 w-[50%] mx-auto my-3 hover:-translate-y-2 hover:shadow-xl hover:shadow-violet-800 rounded-xl text-center transition-all duration-150 ease-linear"
+        className="border-[#661EFE] border-2  py-1 px-4 w-[50%] mx-auto my-3 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/50 rounded-xl text-center transition-all duration-150 ease-linear"
         >
-       Continue With Gmail
+      Continue With Gmail
       </Link >
         </div>
         <ToastContainer
@@ -161,6 +211,7 @@ const Login = () => {
         transition={Flip}
         />
       </div>
+      </XMTPProvider>
   )
 }
 

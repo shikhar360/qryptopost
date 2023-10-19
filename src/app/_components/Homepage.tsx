@@ -6,7 +6,7 @@ import Hero from './Hero';
 
 const Homepage = () => {
   return (
-    <div className={`w-full min-h-screen flex flex-col items-center justify-start `}>
+    <div className={`w-full min-h-screen flex flex-col items-center justify-start bg-black `}>
       <Hero/>
       <Powered/>
       <section className={`w-[96%] md:w-[90%] z-30 min-h-[85vh] flex flex-col items-start justify-start px-20  bg-[#8338ec] text-white mt-40 pt-20 pb-10 rounded-[4rem] font-mooli relative`}>

@@ -18,6 +18,14 @@ export async function grantAll(address : string){
   console.log("Access granted to address----" + address);
 }
 
+export async function clearall(){
+  const tableName = process.env.NEXT_PUBLIC_TABLE_USER || ""
+  const { results } = await Odb.prepare(`DELETE FROM ${tableName};`).all();
+  // const {meta : inserted} =  await stmt.bind(address).all()
+  // const something = await inserted?.txn?.wait();
+  console.log("deleted everything from usertable----" );
+}
+
 export async function grantInsert(address : string){
   const tableName = process.env.NEXT_PUBLIC_TABLE_USER || ""
   const inbox= process.env.NEXT_PUBLIC_TABLE_INBOX || ""
@@ -25,15 +33,19 @@ export async function grantInsert(address : string){
   const subscribe = process.env.NEXT_PUBLIC_TABLE_SUBSCRIBE || ""
   const { results } = await Odb.prepare(`GRANT INSERT ON ${tableName} TO '${address}';`).all();
   console.log("Insert Access granted to User Table----" );
+  toast("Granted you User Table (1/4)" );
   const { results : ib } = await Odb.prepare(`GRANT INSERT ON ${inbox} TO '${address}';`).all();
   console.log("Insert Access granted to INBOX----" );
+  toast("Granted you Inox (2/4)" );
   const { results : rp} = await Odb.prepare(`GRANT INSERT ON ${reply} TO '${address}';`).all();
   console.log("Insert Access granted to REPLY----" );
+  toast("Granted you Replybox (3/4)" );
   const { results : sub } = await Odb.prepare(`GRANT INSERT ON ${subscribe} TO '${address}';`).all();
   console.log("Insert Access granted to Subscribe----" );
+  toast("Granted you Subscribe (4/4)" );
   // const {meta : inserted} =  await stmt.bind(address).all()
   // const something = await inserted?.txn?.wait();
-  toast.success("Granted Insert  🌝")
+  // toast.success("Granted Insert  🌝")
 }
 
 

@@ -32,7 +32,7 @@ const FAQ = () => {
 
   return (
     <div
-      className={`min-h-[80vh] w-[90%] mx-auto flex flex-col text-white py-20 items-center justify-center pt-40`}
+      className={`min-h-[80vh] w-[90%] mx-auto flex flex-col text-white py-20 items-center justify-center bg-black pt-40`}
     >
     
       <p className="text-4xl text-white w-full text-center pb-10">Still Have Questions ?</p>

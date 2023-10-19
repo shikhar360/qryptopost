@@ -225,7 +225,7 @@ const Gmail = () => {
 
   return (
     // <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_ID as string}>
-    <div className="w-full overflow-hidden min-h-screen flex flex-col items-center justify-center bg-black">
+    <div className="w-full relative overflow-hidden min-h-screen flex flex-col items-center justify-center bg-black">
       <h1 className={`w-[80%]`}>{status}</h1>
 
       <div>
@@ -240,9 +240,7 @@ const Gmail = () => {
             <button onClick={logOut}>Log out</button>
           </div>
         ) : (
-          // <button onClick={() => login()}>Sign in with Google 🚀 </button>
-          <>
-            {/* <div id="logg" className={"bg-black p-4"}> */}
+          
               <GoogleLogin
                 onSuccess={(credentialResponse) => {
                   handleLoggedInToGoogle(credentialResponse);
@@ -254,10 +252,11 @@ const Gmail = () => {
                 shape="circle"
                 useOneTap
               />
-            {/* </div> */}
-          </>
+
+          
         )}
       </div>
+      <img src={"https://img.icons8.com/external-vectorslab-outline-color-vectorslab/800/external-47-space-and-planets-vectorslab-outline-color-vectorslab.png"} alt="user image"  className="absolute  top-1/2 left-[60%] z-0"/>
 
       <div
         onClick={() =>
@@ -273,6 +272,7 @@ const Gmail = () => {
       >
         Mint PKP
       </div>
+
       {registeredPkpEthAddress && (
         <div>Registered PKP Eth Address: {registeredPkpEthAddress}</div>
       )}

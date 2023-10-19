@@ -8,7 +8,7 @@ const Powered = () => {
     '/img/tableland.png',
     '/img/lit.png',
     '/img/mask.png',
-    '/img/xmtp.png',
+    '/img/xmpt1.png',
   ]
 
   function marq(data: string[]) {
