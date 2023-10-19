@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState }  from "react";
 import { Database, Metadata } from "@tableland/sdk";
-import {  useAccount  } from "wagmi";
+import {  useAccount  , useWalletClient } from "wagmi";
 import Link from "next/link";
 import { ToastContainer, toast, Flip } from 'react-toastify';
 import { createUserInbox , createReplybox, grantInsert , createsubscribe  , clearall} from "./utilities";
@@ -36,9 +36,12 @@ const Login = () => {
   const {address :addr , isConnected} = useAccount()
   
   
-  const provider = new ethers.providers.JsonRpcProvider( )
-  const signer = provider.getSigner()
+  // const provider = new ethers.providers.JsonRpcProvider(`https://polygon-mumbai.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID as string}`)
+  // const signer = provider.getSigner()
   
+  const { data: walletclient } = useWalletClient();  //so called signer
+  const signer  = walletclient
+
   const setclient = useStore((state)=> state.setXMTP)
 
   useEffect(()=>{
@@ -90,50 +93,56 @@ const Login = () => {
   async function register(data : IData){
     console.log(address);
     //Now need to give access to all the other wallets
-    
-    if (!address){
-      toast.error("Please connect your Wallet 😅")
-      return
+    // try{}catch(err){console.log(err)}
+    // try{}catch(err){console.log(err)}
+    try{
+
+      if (!address){
+        toast.error("Please connect your Wallet 😅")
+        return
     }
 
     setIsDisabled(true)
     //check if the user is on the usertable or not
     const isalready : { ethAddress?: string } = await db.prepare(`SELECT ethAddress FROM ${usersTable} WHERE ethAddress = ?;`).bind(address).first(); //this need somewhere else
     // console.log(results); 
-
+    
     // console.log(isalready);
     
     if(isalready?.ethAddress ){
       toast("User with this Address already present 🤝")
       setIsDisabled(false)
-
+      
       return
     }
+    
+    toast("Registering to XMTP ✧")
+    initXmtp()
     // if the user is present we need to give all access  to create the inbox 
     
-
+    
     //if not 
     //need to ceate a inbox with user and reply for the user
     
     //
-
-   await grantInsert(address)
-  //  const inbox = process.env.NEXT_PUBLIC_TABLE_INBOX as string
-  //  const replybox = process.env.NEXT_PUBLIC_TABLE_REPLYBOX as string
-  //  console.log({inbox , replybox})
-  
-     const stmt =  db.prepare(
-   `INSERT INTO ${usersTable} (ethAddress, name, email, phone, inbox, xmtped, services) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`
-   )
-    const {meta : inserted} =  await stmt.bind(address , data.name , data.email, data.phone, 'undefined' , "false" , "undefined" ).all()
-        const something = await inserted?.txn?.wait();
-        // console.log({something , inserted});
-        toast.success("Inserted Successfully  🎉 ")
-        initXmtp()
-        setIsDisabled(false)
- 
-  //  console.log(results);
-  }
+    
+    await grantInsert(address)
+    const inbox = process.env.NEXT_PUBLIC_TABLE_INBOX as string
+    const replybox = process.env.NEXT_PUBLIC_TABLE_REPLYBOX as string
+    // console.log({inbox , replybox})
+    
+    const stmt =  db.prepare(
+      `INSERT INTO ${usersTable} (ethAddress, name, email, phone, inbox, xmtped, services) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`
+      )
+      const {meta : inserted} =  await stmt.bind(address , data.name , data.email, data.phone, 'undefined' , "true" , "undefined" ).all()
+      const something = await inserted?.txn?.wait();
+      // console.log({something , inserted});
+      toast.success("Inserted Successfully  🎉 ")
+      setIsDisabled(false)
+      
+      // console.log(results);
+    }catch(err){console.log(err)}
+    }
 
 
   
@@ -177,7 +186,7 @@ const Login = () => {
       <button onClick={()=>createUserInbox()}>Insert</button>
       <button onClick={()=>createReplybox()}>reolybox</button>
       <button onClick={()=>createsubscribe()}>subscribe</button> */}
-      {/* <button onClick={()=>clearall()}>clear</button> */}
+      <button onClick={()=>clearall()}>clear</button>
       {/* <button onClick={()=>granting(address as string)}>GRANt</button> */}
   <p> </p>
    <div className="md:w-[60%] w-[95%] bg-stone-800 flex flex-col items-center justify-start px-4 py-8 rounded-xl shadow-lg shadow-black/120"> 

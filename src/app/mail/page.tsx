@@ -11,15 +11,24 @@ import dynamic from "next/dynamic";
 import useDebounce from './useDebounce';
 interface IMail {
   id: number;
-  content: string;
+  random: string;
+  cipher: string;
+  datahash: string;
   sender: string;
   receiver: string;
   subject: string;
   time: string;
-  replies: string;
+  // replies: string;
+}
+interface IReply {
+  id: number;
+  mail_id: number;
+  reply: string;
 }
 import {  useAccount } from "wagmi";
 import { ToastContainer, toast, Flip } from 'react-toastify';
+import * as LitJsSdk from "@lit-protocol/lit-node-client";
+import axios from "axios";
 
 const Mail = () => {
   const address = useStore((state) => state.ethAddr);
@@ -28,17 +37,21 @@ const Mail = () => {
   const read = searchParams.get("read");
   const filter = searchParams.get("filter");
   const [inputValue, setInputValue] = useState<string>('');
+  const [decryptedmail, setdecryptedmail] = useState<{id : number , dmail : string}>({id : 0 , dmail : ''});
   // console.log(read);
   // console.log(service)
   // const [seeServices, setSeeServices] = useState<boolean>(true);
   const db = new Database();
   const inbox = process.env.NEXT_PUBLIC_TABLE_INBOX || "";
-
+  const replybox = process.env.NEXT_PUBLIC_TABLE_REPLYBOX || ""
   // if (mail.sender !== address){
   //   toast.error("Enter your connected Wallet Address")
   //   return
   // }
-
+ 
+  const litNodeClient = new LitJsSdk.LitNodeClient({
+    litNetwork: "cayenne"
+});
 
   const setAddress = useStore(state => state.setEthAddr)  
   const { address : addr, isConnected } = useAccount()
@@ -52,7 +65,7 @@ const Mail = () => {
     
     if(!isConnected){
       setAddress('');
-      if(!address)toast.warn("Connect wallet");
+      if(!address)toast.warn("Connect wallet or Login with email");
     }
     
     path.current = address === '' ? '' : `/${address}` 
@@ -63,12 +76,35 @@ const Mail = () => {
   const [allMails, setAllMails] = useState<IMail[]>([
     {
       id: 0,
-      content: "",
+      random: "",
+      cipher: "",
+      datahash: "",
       sender: "",
       receiver: "",
       subject: "",
       time: "",
-      replies: "",
+      // replies: "",
+    },
+  ]);
+  const [onEmail, setOnEmail] = useState<IMail[]>([
+    {
+      id: 0,
+      random: "",
+      cipher: "",
+      datahash: "",
+      sender: "",
+      receiver: "",
+      subject: "",
+      time: "",
+      // replies: "",
+    },
+  ]);
+
+  const [allreply, setAllReply] = useState<IReply[]>([
+    {
+      id: 0,
+      mail_id: 0,
+      reply: ""
     },
   ]);
   
@@ -76,6 +112,7 @@ const Mail = () => {
 
 
   const [maskData , setMaskData] = useState<any>("")
+  const Uemail = useStore(state => state.userEmail)  
 
   // let path = ``
   useEffect(() => {
@@ -86,6 +123,39 @@ const Mail = () => {
       // SELECT * FROM messages WHERE sender = 'given_address' OR receiver = 'given_address';
       // console.log(address)
       // if(!address)toast.warn("Connect wallet");
+
+       if (Uemail){
+
+         const usertable = process.env.NEXT_PUBLIC_TABLE_USER || ""
+         
+         const  check : {xmtped? : string} = await db.prepare(
+           `SELECT xmtped FROM ${usertable} WHERE email = ?;`
+           )
+           .bind(Uemail)
+           .first();
+           console.log(check?.xmtped);
+           
+           if(check?.xmtped == "false"){
+             
+             const { results : emails } = await db
+             .prepare(
+               `SELECT * FROM ${inbox} WHERE receiver = ? ORDER BY time DESC;`
+               )
+               .bind(Uemail)
+               .all();
+               
+               if (emails) {
+                 const data: unknown[] = emails;
+                 setOnEmail(prev => {
+                  return [ ...data ] as IMail[]
+                 });
+                }
+                
+              }
+
+            }
+
+
       if (!address)return 
       const { results } = await db
         .prepare(
@@ -96,111 +166,237 @@ const Mail = () => {
 
       if (results) {
         const data: unknown[] = results;
-        setAllMails(data as IMail[]);
+        setAllMails(prev => {
+          return [  ...data] as IMail[]
+        });
       }
-
-      // console.log(results);
+      
     }
-
     
-
-   
-
+    
+    
+    
+    
     getallMails();
+    
   }, [address ]);
+  // console.log(onEmail);
 
   const theMail = useMemo(() => {
     if (read) {
-      const mail = allMails.find((mail) => mail.id === +read);
+
+
+        // const mailonemail = onEmail.find((mail) => mail.id === +read);
+        // return mailonemail
+
+
+
+         const isthere = allMails.some((mail) => mail.id === +read);
+
+
+          return isthere ? allMails.find((mail) => mail.id === +read) : onEmail.find((mail) => mail.id === +read);
+
+
+
+
+
       // console.log("read" , read);
-      return mail;
+     
     }
     // const istrue = mail?.sender === address || mail?.receiver === address;
   }, [read , allMails ]);
+
+
+  async function getreplied(){
+    if(!read)return
+    const { results } = await db
+      .prepare(
+        `SELECT * FROM ${replybox} WHERE mail_id = ?;`
+      )
+      .bind(+read)
+      .all();
+
+      console.log(results , read)
+      
+      if (results) {
+        const data: unknown[] = results;
+        setAllReply(data as IReply[]);
+      }
+  }
+
+  useEffect(()=>{
+    if(!read)return
+    getreplied()
+  },[read])
 
 
   
 
   const filteredUser = useMemo(() => {
 
-    if(filter === "inbox" && isConnected){
+    if(filter === "inbox" && isConnected && Uemail){
       const mail = allMails.filter((mail) => mail.receiver === address);
+      const mail2 = onEmail.filter((mail) => mail.receiver === Uemail);
       
       // console.log("inbox" , mail);
+      if(Uemail){
+        return [...mail2 , ...mail]
+      }
+      // return mail
+
+    }
+    if(filter === "inbox" && isConnected && !Uemail){
+      const mail = allMails.filter((mail) => mail.receiver === address);
+      // const mail2 = onEmail.filter((mail) => mail.receiver === address);
+      
+      // console.log("inbox" , mail);
+      
       return mail
+
+    }
+    if(filter === "inbox" && !isConnected && Uemail){
+      // const mail = allMails.filter((mail) => mail.receiver === address);
+      const mail2 = onEmail.filter((mail) => mail.receiver === Uemail);
+      
+      // console.log("inbox" , mail);
+      
+      return mail2
+
     }
 
-    if(filter === "outbox" && isConnected){
+    if(filter === "outbox" && isConnected ){
       const mail = allMails.filter((mail) => mail.sender === address);
       // console.log("outbox" ,  mail);
       return mail
     }
     
-    if(!filter && isConnected )return allMails
+    if(!filter && isConnected && Uemail )return [...allMails , ...onEmail]
+    if(!filter && isConnected && !Uemail )return allMails
+    if(!filter && Uemail )return onEmail
 
-    if(!isConnected){
+    if(!isConnected || !Uemail){
       return [
         {
           id: 0,
-          content: "",
+          random: "",
+          cipher: "",
+          datahash: "",
           sender: "",
           receiver: "",
           subject: "",
           time: "",
-          replies: "",
         },
       ]
     }
-  }, [filter , allMails , isConnected]);
+  }, [filter , allMails , isConnected , Uemail , onEmail]);
+
+
+
 
   // console.log(filteredUser);
-  
-  const color = {
-    ENS : "",
-    farcaster : "bg-[#e0aaff]",
-    lens : '',
-    dotbit : "bg-[#44355b]",
-    rand : "bg-[#f8edeb]",
-    twitter : "bg-[#20a4f3]",
-    github : "bg-[#011627]",
-    discord : "bg-[#2541b2]",
-    website : "bg-[#9fffcb]",
+  async function test (){
+    const usertable = process.env.NEXT_PUBLIC_TABLE_USER || ""
+
+    const  check  = await db.prepare(
+      `SELECT xmtped FROM ${usertable} WHERE email = ?;`
+     )
+    .bind(Uemail)
+    .first();
+    console.log(check);
   }
   
   const debouncedValue = useDebounce(inputValue, 2000);
-  console.log(inputValue);
+  
+  // console.log(`Searching for ${debouncedValue}`);
+  // Add your code here to be executed after 2 seconds of inactivity
+  
+  async function getMaskData(){
+    if (!debouncedValue)return
+    try{
+      console.log("the deb",debouncedValue);
+      
+      
+      const response  = await axios(`https://api.web3.bio/profile/${debouncedValue}`)
+      //  const response = await fetch("http://example.com/movies.json");
+      const data = await response.data
+      console.log(data)
+      setMaskData(data)
+    }catch(err){
+      console.log(err)
+      
+      setMaskData('')
+    }
+  }
 
   useEffect( () => {
-      if (!debouncedValue)return
-      // console.log(`Searching for ${debouncedValue}`);
-      // Add your code here to be executed after 2 seconds of inactivity
+  getMaskData()
       
-      async function getMaskData(){
-        try{
-           if(!address)console.log("Connect your Wallet");
-           if(!address)return
-
-            const response  = await fetch(`https://api.web3.bio/profile/${debouncedValue}`)
-            //  const response = await fetch("http://example.com/movies.json");
-            const data = await response.json();
-            console.log(data)
-            setMaskData(data)
-          }catch(err){
-            console.log(err)
-            
-            setMaskData('')
-          }
-        }
-         getMaskData()
-      
-  }, [debouncedValue]);
+  }, [debouncedValue , inputValue]);
 
   // console.log(maillink)
-  console.log(maskData)
+  // console.log(maskData)
   
- 
-  return (
-    <main className="flex w-full max-h-screen flex-col items-center justify-center overflow-hidden  bg-[#2400469e] scrollbar-hide relative">
+  async function test2 (){
+    
+    
+    
+  }
+
+  const condition = (  receiverwallet: string) =>{
+    if(!receiverwallet ){
+      console.log("provide what wallets can see that message");
+      return
+    }
+    return  [
+      {
+        contractAddress: '',
+        standardContractType: '',
+        chain: 'mumbai',
+        method: '',
+        parameters: [':userAddress'],
+        returnValueTest: {
+          comparator: '=',
+          value: receiverwallet ,
+        },
+      }
+    ];
+
+  
+  }
+  
+  const decrypt = async( ciphertext : string , dataToEncryptHash : string  , id : number)=>{
+    try{
+      // console.log(obj);
+      await litNodeClient.connect();
+      const authSig = await LitJsSdk.checkAndSignAuthMessage({
+        chain: 'mumbai'
+      });
+      console.log( "startind decryption" );
+      // const ciphertext = obj.ciphertext;
+      const accs = condition(address ) // this need to get changed should be receivers (the current user if he is the receiver)
+      
+      // const dataToEncryptHash = obj.dataToEncryptHash;
+      
+      const decryptedString = await LitJsSdk.decryptToString({
+        accessControlConditions: accs,
+        ciphertext,
+        dataToEncryptHash,
+        authSig: authSig,
+        chain: 'mumbai',
+      },
+      litNodeClient,
+      );
+      // console.log( "startind decryption" );
+      
+      // console.log("decryptedString:",  decryptedString);
+      setdecryptedmail({id : id , dmail : decryptedString})
+      // return decryptedString
+    }catch(err){console.log(err)}
+    }
+    // console.log(theMail)
+    
+    return (
+      <main className="flex w-full max-h-screen flex-col items-center justify-center overflow-hidden  bg-[#2400469e] scrollbar-hide relative">
       <div className="flex w-[100vw] h-[100vh] items-end   overflow-hidden justify-center">
         <div className="flex w-[25vw] h-[100vh] flex-col overflow-hidden items-center justify-center">
           <div
@@ -242,7 +438,7 @@ const Mail = () => {
             <Services />
           </div>
         </div>
-
+        {/* <div onClick={()=>test()}>Testt</div> */}
         <div className="flex w-full flex-col h-[100vh] pt-20 overflow-hidden ">
           <input
            onChange={(e) => setInputValue(e.target.value)}
@@ -265,24 +461,32 @@ const Mail = () => {
               </span>
             </div>
 
-            {read && theMail?.sender === address || theMail?.receiver === address ? (
+            {read && theMail?.sender === address || theMail?.receiver === address || theMail?.receiver == Uemail  ? (
               <div className={` w-full min-h-full flex-1 flex-col flex gap-y-7 items-start justify-start px-4 py-8 `}>
                 {/* {theMail?.content} */}
-               <span className={`text-sm text-white/70 `}>{theMail.receiver === address ? `From : ${theMail.sender}` : `To : ${theMail.receiver}`} </span>
+                <Link href={`/mail/${address}?receiver=${theMail.sender}&replyto=${theMail.id}`} className={`border-violet-500 py-2 mb-4 px-4 rounded-xl border-2 hover:bg-violet-500 cursor-pointer absolute right-10 bottom-10 ${Uemail ? "hidden" : "block"}`} >Reply</Link>
+               <span className={`text-sm text-white/70 `}>{theMail.receiver === (address || Uemail) ? `From : ${theMail.sender}` : `To : ${theMail.receiver}`} </span>
                <span  className={`text-xl`}>Subject : {theMail.subject}</span>
                <span  className={`text-base max-h-[50vh] overflow-scroll scrollbar-hide m`}>
-                <span className={` w-full h-full font-jakarta leading-wider tracking-wide  `}>
-                  {theMail.content} 
+                <span className={` w-full h-full font-jakarta leading-wider tracking-wide break-words `}>
+                  {theMail.receiver === address && <button className={`border-violet-500 py-2 mb-4 px-4 rounded-xl border-2 hover:bg-violet-500 cursor-pointer ${theMail.cipher === "notEncrypted" ? "hidden" : "block"} `} onClick={()=>decrypt(theMail.cipher , theMail.datahash , theMail.id)}> Decrypt</button>} 
+                  {theMail.cipher === "notEncrypted" ? theMail.random : theMail.cipher} 
+                   <br/>
+                   <br/>
+                  {theMail.id === decryptedmail.id ? decryptedmail.dmail : null}
+                   <br/>
+                   <br/>
+               {allreply.map((reply : any ,idx : number) => <div key={idx}>Reply : {reply.reply}</div>)}
                 </span>
                 </span>
                <span  className={`text-xs text-white/70 font-bold`} >{theMail.time}</span>
               </div>
             ) : read === null ? null : (
               <Loading />
-            )}
+              )}
 
 
-            {allMails[0]?.sender && read === null && isConnected ? (
+            {(allMails[0]?.sender || onEmail[0]?.sender) && read === null && (isConnected || Uemail) ? (
               <div
                 className={`w-full min-h-full flex-1   select-none flex items-center overflow-hidden flex-col ${
                   read === null ? "flex" : "hidden"
@@ -291,7 +495,9 @@ const Mail = () => {
                 <div
                   className={`flex flex-col  flex-0 w-full items-start  justify-start overflow-y-scroll  scrollbar-hide pb-[50vh]  `}
                 >
-                  {filteredUser?.map((mail, idx) => (
+                  {filteredUser?.map((mail, idx) => {
+                    if(!mail.sender)return
+                    return(
                     <Link
                       href={`/mail?read=${mail.id}`}
                       key={idx}
@@ -308,9 +514,10 @@ const Mail = () => {
                       <span
                         className={`w-[30%] text-sm text-white/80 truncate`}
                       >
-                        {mail.sender == address
-                          ? `TO : ${mail.receiver}`
-                          : mail.sender}
+                        {mail.sender == address && mail.receiver.endsWith("@gmail.com")
+                          && `TO : ${mail.receiver}` ||  `From : ${mail.sender}`
+                          }
+                       
                       </span>
                       <span
                         className={`w-[20%] font-semibold text-xs pr-5 text-end truncate`}
@@ -318,7 +525,7 @@ const Mail = () => {
                         {mail.time}
                       </span>
                     </Link>
-                  ))}
+                  )})}
                 </div>
               </div>
             ) : read ? null : (

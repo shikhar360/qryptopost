@@ -10,7 +10,8 @@ export default function Navbar() {
 
   const { address, isConnected } = useAccount()
   
-  const setAddr = useStore(state => state.setEthAddr)  
+  const avatar = useStore(state => state.avatar)  
+  const name = useStore(state => state.username)  
   //  useEffect(()=>{
 
     //  if(isConnected){
@@ -98,7 +99,7 @@ export default function Navbar() {
           <ConnectButton/>
             <Link href={"/login"}>
               <p className="  transition-all duration-200 ease-linear  cursor-pointer bg-transparent  rounded-md text-center   ">
-               Login
+               {avatar? <img src={avatar} alt="userimg" className=' w-8 rounded-full '/> :"Login"}
               </p>
             </Link>
         </div> 

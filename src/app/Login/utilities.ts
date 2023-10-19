@@ -142,7 +142,28 @@ export async function createReplybox(){
 
 
 
+export async function insertEmail (name : string , email : string , pkpPublickey : string ){
+  const tableName = process.env.NEXT_PUBLIC_TABLE_USER || ""
+  toast("Inserting into Database")
+  const stmt =  Odb.prepare(
+    `INSERT INTO ${tableName} (ethAddress, name, email, phone, inbox, xmtped, services) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`
+    )
+    const {meta : inserted} =  await stmt.bind(pkpPublickey , name , email, "", 'undefined' , "false" , "undefined" ).all()
+    const something = await inserted?.txn?.wait();
+    toast.success("Inserted Successfully  🎉 ")
+}
+export async function findEmail ( email : string , ){
+  const tableName = process.env.NEXT_PUBLIC_TABLE_USER || ""
+   
+    const isalready : { email?: string } = await Odb.prepare(`SELECT email FROM ${tableName} WHERE email = ?;`).bind(email).first();
+    if(isalready?.email){
+      toast.success("Logged In Successfully  🎉 ")
+      return true
+    }
 
+    return false
+   
+}
 
 
 

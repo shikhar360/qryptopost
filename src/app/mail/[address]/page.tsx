@@ -21,8 +21,9 @@ const Sendbox = ({ params }: { params: { address: string } }) => {
   });
   const searchParams = useSearchParams();
   const receiver = searchParams.get("receiver");
-
-  // const address = useStore((state)=> state.ethAddr)
+  const replyto = searchParams.get("replyto");
+  console.log(replyto)
+  // const addr  = useStore((state)=> state.ethAddr)
   const usersTable = process.env.NEXT_PUBLIC_TABLE_USER || "";
   const [address , setAddress] = useState<string>('')
   const {address :addr , isConnected} = useAccount()
@@ -34,6 +35,7 @@ const Sendbox = ({ params }: { params: { address: string } }) => {
 
   const db = new Database();
   const inbox= process.env.NEXT_PUBLIC_TABLE_INBOX || ""
+  const replybox = process.env.NEXT_PUBLIC_TABLE_REPLYBOX as string
   const [data, setData] = useState<IMail>({
     sender: params.address || "",
     receiver: receiver || "",
@@ -62,31 +64,6 @@ const Sendbox = ({ params }: { params: { address: string } }) => {
       }
     ];
 
-    // return [
-    //   {
-    //     contractAddress: "",
-    //     standardContractType: "",
-    //     chain: 'mumbai',
-    //     method: "",
-    //     parameters: [":userAddress"],
-    //     returnValueTest: {
-    //       comparator: "=",
-    //       value: senderwallet,
-    //     },
-    //   },
-    //   { operator: "or" },
-    //   {
-    //     contractAddress: "",
-    //     standardContractType: "",
-    //     chain: 'mumbai',
-    //     method: "",
-    //     parameters: [":userAddress"],
-    //     returnValueTest: {
-    //       comparator: ">=",
-    //       value: receiverwallet,
-    //     },
-    //   },
-    // ];
   
   }
 
@@ -135,10 +112,15 @@ async function test (){
     // console.log(results[0]);
 
 
-    const data =  encryption( "0x3aD7CBc5927a40ab90c2cEAEdD8Bf2489B2659C4" , "the secret tst") 
-    console.log(data)
+    // const data =  encryption( "0x3aD7CBc5927a40ab90c2cEAEdD8Bf2489B2659C4" , "the secret tst") 
+    // console.log(data)
+   console.log(replybox)
+    const { results } = await db
+      .prepare(
+        `SELECT * FROM ${replybox};`
+      ).all();
 
-
+      console.log(results )
   }catch(err){console.log(err)}
 }
 
@@ -206,7 +188,7 @@ async function test (){
       .bind(address)
       .first();
       
-      console.log(check);
+      // console.log(check);
 
       if(!check || !check?.ethAddress){
        toast.error("Login as a user first 🤖")
@@ -221,7 +203,7 @@ async function test (){
 
 
        if(isEncrypted){
-        const data = await encryption( mail.receiver , "the secret tst") 
+        const data = await encryption( mail.receiver , mail.content) 
         if(!mail.receiver)toast.error("Atleast tell whome to send message")
          console.log(data)
          const stmt =  db.prepare(
@@ -250,7 +232,44 @@ async function test (){
 
 
 
-  async function replying (){
+  async function replying ( ){
+    if(!receiver){
+      toast.error("Error sending message")
+      return
+    }
+    if(address !== data.sender ){
+      toast.error("Dont try to be a Hacker🌚")
+      return
+    }
+
+    
+    if(!replybox){
+      toast.error("No replybox")
+      return
+    }
+    
+    const  check : {results? : any } = await db.prepare(
+      `SELECT id FROM ${inbox} WHERE receiver = ?;`
+     )
+    .bind(address)
+    .all();
+    console.log(check?.results);
+
+    if(!replyto)return
+    const couldreply = check?.results?.some(( val : any) => +val.id === +replyto)
+    console.log(check.results);
+    
+    if(!couldreply){
+      toast.error("Cant Reply to someone who didnt sended you Mail")
+      return
+    }
+    console.log(replybox , replyto)
+    const stmt =  db.prepare(
+      `INSERT INTO ${replybox} (mail_id, reply) VALUES (?1, ?2)`
+       )
+       await stmt.bind(+replyto , data.content).all()
+       console.log(stmt)
+       toast.success("Reply sent Successfully  🎉 ")
 
   }
   // sender TEXT NOT NULL,
@@ -308,7 +327,7 @@ async function test (){
             className="text-white bg-transparent border-b mb-4 border-white/20 focus:outline-none  text-start text-sm  w-[80%]  px-2  rounded-sm h-8 "
           />
         </div>
-        <div className={`flex items-center gap-4 justify-center w-full `}>
+       { !replyto && <div className={`flex items-center gap-4 justify-center w-full `}>
           <img className={`w-5`} src="/img/sub.png" alt="img" />
           <input
             onChange={handledata}
@@ -318,12 +337,12 @@ async function test (){
             value={data.subject}
             className="text-white bg-transparent border-b mb-4 border-white/20 focus:outline-none  text-start text-sm  w-[80%]  px-2  rounded-sm h-8 "
           />
-        </div>
+        </div>}
         <div className={`flex items-start  gap-4 justify-center w-full `}>
           <img className={`w-5`} src="/img/content.png" alt="img" />
           <textarea
             onChange={handledata}
-            placeholder="Content : Will be out for some work ........ Reguards"
+            placeholder={replyto ? "Reply to the conversation" :"Content : Will be out for some work ........ "}
             name="content"
             value={data.content}
             className="text-white bg-transparent  mb-4 focus:outline-none  text-start resize-none text-sm  w-[80%]   px-2  rounded-sm h-[30vh] "
@@ -331,14 +350,20 @@ async function test (){
         </div>
         <div  className={`flex items-start  gap-4 justify-start w-full mx-8 `}>
 
-        <button
+       {!replyto && <button
       onClick={()=>sendMail(data , true)}
-        className="bg-[#8338ec] text-white py-2 px-4   my-3 hover:-translate-y-1 hover:shadow-xl hover:shadow-black rounded-r-full transition-all duration-150 ease-linear"
+        className={`bg-[#8338ec] text-white py-2 px-4   my-3 hover:-translate-y-1 hover:shadow-xl hover:shadow-black rounded-r-full transition-all duration-150 ease-linear ${data.receiver.endsWith("@gmail.com")? "hidden" : "block"}`}
         >
        Send Encrypted 🔥
-      </button>
+      </button>}
         <button
-          onClick={()=>sendMail(data )}
+          onClick={()=>{
+            if(replyto){
+              replying()
+              return
+            }
+            sendMail(data )
+          }}
         className="border-[#8338ec] border text-white py-2 px-4   my-3 hover:-translate-y-1 hover:shadow-xl hover:shadow-black rounded-r-full transition-all duration-150 ease-linear"
         >
        Send 
