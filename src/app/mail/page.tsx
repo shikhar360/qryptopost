@@ -469,7 +469,7 @@ const Mail = () => {
                <span  className={`text-xl`}>Subject : {theMail.subject}</span>
                <span  className={`text-base max-h-[50vh] overflow-scroll scrollbar-hide m`}>
                 <span className={` w-full h-full font-jakarta leading-wider tracking-wide break-words `}>
-                  {theMail.receiver === address && <button className={`border-violet-500 py-2 mb-4 px-4 rounded-xl border-2 hover:bg-violet-500 cursor-pointer ${theMail.cipher === "notEncrypted" ? "hidden" : "block"} `} onClick={()=>decrypt(theMail.cipher , theMail.datahash , theMail.id)}> Decrypt</button>} 
+                  {theMail.receiver === address && <button className={`border-violet-500 py-2 mb-4 px-4 rounded-xl border-2 hover:bg-violet-500 cursor-pointer ${(theMail.cipher == "notEncrypted" || theMail.sender === address) ? "hidden" : "block"} `} onClick={()=>decrypt(theMail.cipher , theMail.datahash , theMail.id)}> Decrypt</button>} 
                   {theMail.cipher === "notEncrypted" ? theMail.random : theMail.cipher} 
                    <br/>
                    <br/>
@@ -514,7 +514,7 @@ const Mail = () => {
                       <span
                         className={`w-[30%] text-sm text-white/80 truncate`}
                       >
-                        {mail.sender == address && mail.receiver.endsWith("@gmail.com")
+                        {(mail.sender == address || mail.receiver.endsWith("@gmail.com"))
                           && `TO : ${mail.receiver}` ||  `From : ${mail.sender}`
                           }
                        

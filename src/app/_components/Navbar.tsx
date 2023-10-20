@@ -24,12 +24,12 @@ export default function Navbar() {
 
 
   return (
-    <nav className=" z-50 w-[96%]  md:w-[80%] bg-transparent backdrop-blur-md  font-jakarta    p-2  text-lg flex items-center justify-between transition-all duration-300 ease-linear fixed top-2 left-1/2 -translate-x-1/2 rounded-xl text-[#c497ff] ">
+    <nav className=" z-50 w-[96%]  md:w-[85%] bg-transparent backdrop-blur-md  font-jakarta    p-2  text-lg flex items-center justify-between transition-all duration-300 ease-linear fixed top-2 left-1/2 -translate-x-1/2 rounded-xl text-[#c497ff] ">
 
       <div className=" md:w-60  cursor-pointer flex  self-start items-center  px-2 justify-center rounded-md ">
           <Link href={"/"} className={`flex items-center   `}>
            {/* <img src="/img/logo.png" alt="logo" className={`w-12`}  /> */}
-            <p className=" cursor-pointer transition-all duration-200 ease-linear  bg-transparent  py-1.5 px-4 rounded-md text-center   ">
+            <p className=" cursor-pointer transition-all duration-200 ease-linear  bg-transparent  py-2 px-3 rounded-md text-center   ">
             Qryptopost
             </p>
           </Link>
@@ -76,10 +76,17 @@ export default function Navbar() {
             </p>
           </Link>
           <Link
-            href={`/`}
+            href={`/marketers`}
           >
             <p className=" cursor-pointer transition-all duration-200 ease-linear    px-4  rounded-md text-center ">
             Marketers
+            </p>
+          </Link>
+          <Link
+            href={`/channels`}
+          >
+            <p className=" cursor-pointer transition-all duration-200 ease-linear    px-4  rounded-md text-center ">
+            Services
             </p>
           </Link>
           <Link href={"/invite"}>

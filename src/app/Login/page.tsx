@@ -186,7 +186,7 @@ const Login = () => {
       <button onClick={()=>createUserInbox()}>Insert</button>
       <button onClick={()=>createReplybox()}>reolybox</button>
       <button onClick={()=>createsubscribe()}>subscribe</button> */}
-      <button onClick={()=>clearall()}>clear</button>
+      {/* <button onClick={()=>clearall()}>clear</button>  */}
       {/* <button onClick={()=>granting(address as string)}>GRANt</button> */}
   <p> </p>
    <div className="md:w-[60%] w-[95%] bg-stone-800 flex flex-col items-center justify-start px-4 py-8 rounded-xl shadow-lg shadow-black/120"> 

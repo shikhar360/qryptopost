@@ -10,12 +10,13 @@ const Odb = new Database({signer});
 
 
 
-export async function grantAll(address : string){
-  const tableName = process.env.NEXT_PUBLIC_TABLE_USER || ""
-  const { results } = await Odb.prepare(`GRANT INSERT, UPDATE, DELETE ON ${tableName} TO '${address}';`).all();
+export async function grantChannel(address : string){
+  const channel = process.env.NEXT_PUBLIC_TABLE_CHANNEL || ""
+  const { results } = await Odb.prepare(`GRANT INSERT ON ${channel} TO '${address}';`).all();
   // const {meta : inserted} =  await stmt.bind(address).all()
   // const something = await inserted?.txn?.wait();
-  console.log("Access granted to address----" + address);
+  console.log("Access granted to Channels" + address);
+  toast("Granted you Channel Access" );
 }
 
 export async function clearall(){
@@ -31,18 +32,24 @@ export async function grantInsert(address : string){
   const inbox= process.env.NEXT_PUBLIC_TABLE_INBOX || ""
   const reply = process.env.NEXT_PUBLIC_TABLE_REPLYBOX || ""
   const subscribe = process.env.NEXT_PUBLIC_TABLE_SUBSCRIBE || ""
+  const channel = process.env.NEXT_PUBLIC_TABLE_CHANNEL || ""
   const { results } = await Odb.prepare(`GRANT INSERT ON ${tableName} TO '${address}';`).all();
   console.log("Insert Access granted to User Table----" );
-  toast("Granted you User Table (1/4)" );
+  toast("Granted you User Table (1/5)" );
   const { results : ib } = await Odb.prepare(`GRANT INSERT ON ${inbox} TO '${address}';`).all();
   console.log("Insert Access granted to INBOX----" );
-  toast("Granted you Inox (2/4)" );
+  toast("Granted you Inox (2/5)" );
   const { results : rp} = await Odb.prepare(`GRANT INSERT ON ${reply} TO '${address}';`).all();
   console.log("Insert Access granted to REPLY----" );
-  toast("Granted you Replybox (3/4)" );
+  toast("Granted you Replybox (3/5)" );
   const { results : sub } = await Odb.prepare(`GRANT INSERT ON ${subscribe} TO '${address}';`).all();
   console.log("Insert Access granted to Subscribe----" );
-  toast("Granted you Subscribe (4/4)" );
+  toast("Granted you Subscribe (4/5)" );
+  const { results : cha } = await Odb.prepare(`GRANT INSERT ON ${channel} TO '${address}';`).all();
+  toast("Granted you Mass Mailing (5/5)" );
+
+
+  // const { results } = await Odb.prepare(`GRANT INSERT ${tableName} TO '${address}';`).all();
   // const {meta : inserted} =  await stmt.bind(address).all()
   // const something = await inserted?.txn?.wait();
   // toast.success("Granted Insert  🌝")
@@ -133,6 +140,31 @@ export async function createReplybox(){
       if(!reply){
         toast.error("ERROR creating Inbox")
         console.log("Error while creating the inbox table");
+      }
+     
+
+    }catch(err){console.log(err)}
+}
+
+export async function channelpublish(){
+  try{
+    
+
+    const { meta: create } = await Odb
+    .prepare( `CREATE TABLE channel (
+      id INTEGER PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      topic TEXT NOT NULL,
+      description TEXT NOT NULL
+      );`)
+      .run();
+      const reply =  create.txn?.name    //thename of the table 
+      toast.success("Channel created 🎉 ")
+      console.log(reply)
+      
+      if(!reply){
+        toast.error("ERROR creating Channel")
+        console.log("Error while creating the Channel table");
       }
      
 
