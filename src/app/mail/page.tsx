@@ -25,6 +25,12 @@ interface IReply {
   mail_id: number;
   reply: string;
 }
+interface IMass {
+  id: number
+  user_id : number
+  topic: string;
+  description: string;
+}
 import {  useAccount } from "wagmi";
 import { ToastContainer, toast, Flip } from 'react-toastify';
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
@@ -99,6 +105,15 @@ const Mail = () => {
       // replies: "",
     },
   ]);
+
+
+  const [serviceMails, setServiceMails] = useState<IMass[]>([{
+    id: 0,
+    user_id : 0,
+    topic: "",
+    description: "",
+  }]);
+
 
   const [allreply, setAllReply] = useState<IReply[]>([
     {
@@ -175,8 +190,6 @@ const Mail = () => {
     
     
     
-    
-    
     getallMails();
     
   }, [address ]);
@@ -207,6 +220,8 @@ const Mail = () => {
   }, [read , allMails ]);
 
 
+
+
   async function getreplied(){
     if(!read)return
     const { results } = await db
@@ -229,7 +244,28 @@ const Mail = () => {
     getreplied()
   },[read])
 
+  useEffect(()=>{
+    async function getMyData (){
+      try{
+        if(!address)return
+      const channel = process.env.NEXT_PUBLIC_TABLE_CHANNEL || "";
+      if(!service)return
+        const owned : {results? : any} = await db
+        // .prepare(`SELECT * FROM ${channel};`) // for everything from the table
+        .prepare(`SELECT * FROM ${channel} WHERE user_id = ?;`)
+        .bind(+service)
+        .all();
+      // console.log(owned?.results);
+       setServiceMails(owned?.results)
+      }catch(err){console.log(err)}
+    }
+    
+    
+    
+    getMyData()
+  },[address , service])
 
+ 
   
 
   const filteredUser = useMemo(() => {
@@ -394,7 +430,7 @@ const Mail = () => {
     }catch(err){console.log(err)}
     }
     // console.log(theMail)
-    
+  
     return (
       <main className="flex w-full max-h-screen flex-col items-center justify-center overflow-hidden  bg-[#2400469e] scrollbar-hide relative">
       <div className="flex w-[100vw] h-[100vh] items-end   overflow-hidden justify-center">
@@ -416,21 +452,21 @@ const Mail = () => {
             </Link>
             <Link
             href={`/mail`}
-              className=" text-white py-2 px-4 w-full text-sm hover:ring-[2px] hover:ring-[#8338ec] my-3  rounded-r-full transition-all
+              className=" text-white py-2 px-4 w-full text-center text-sm hover:ring-[2px] hover:ring-[#8338ec] my-3  rounded-r-full  transition-all
                duration-150 ease-linear"
             >
               All Mails 📬
             </Link>
             <Link
             href={`/mail?filter=inbox`}
-              className=" text-white py-2 px-4 w-full text-sm hover:ring-[2px] hover:ring-[#8338ec] my-3  rounded-r-full transition-all 
+              className=" text-white py-2 px-4 w-full text-center text-sm hover:ring-[2px] hover:ring-[#8338ec] my-3  rounded-r-full  transition-all 
               duration-150 ease-linear"
             >
               Inbox 📩
             </Link>
             <Link
             href={`/mail?filter=outbox`}
-              className=" text-white py-2 px-4 w-full text-sm hover:ring-[2px] hover:ring-[#8338ec] my-3  rounded-r-full transition-all 
+              className=" text-white py-2 px-4 w-full text-center text-sm hover:ring-[2px] hover:ring-[#8338ec] my-3  rounded-r-full  transition-all 
               duration-150 ease-linear"
             >
               Outbox 📤
@@ -460,6 +496,10 @@ const Mail = () => {
                 Gaseless Mails - XMTP
               </span>
             </div>
+
+          <div className={` w-full h-full ${service ? "hidden" : "block"}`}>
+
+          
 
             {read && theMail?.sender === address || theMail?.receiver === address || theMail?.receiver == Uemail  ? (
               <div className={` w-full min-h-full flex-1 flex-col flex gap-y-7 items-start justify-start px-4 py-8 `}>
@@ -531,6 +571,25 @@ const Mail = () => {
             ) : read ? null : (
               <Loading />
             )}
+          </div>
+
+          <div className={` w-full h-full ${!service ? "hidden" : "block"} flex flex-col`}>
+          {serviceMails[0]?.topic ? 
+            <div className={`w-full py-4 max-h-[70vh] overflow-y-scroll  pb-[20vh] scrollbar-hide`}>
+            
+            { serviceMails.map((mail : IMass , idx : number)=>{
+              return (
+                <div key={idx} className={`${
+                  idx % 2 === 0 ? "" : " bg-white/20"
+                } mb-4 py-1 pb-2 px-2 rounded-md `}>
+                  <p className={`text-base font-semibold `}>{mail.topic.toUpperCase()}</p>
+                  <p className={`text-xs text-white/70 `}>{mail.description}</p>
+                </div>
+              )
+            })}
+            </div> : <Loading/>}
+          </div>
+
           </div>
         </div>
       </div>

@@ -30,12 +30,15 @@ const InputForm = () => {
     topic: "",
     description: "",
   }]);
+  const [mysubs, setMysubs] = useState<{subscriber : string}[]>([{
+    subscriber : ""
+  }]);
   const [address, setAddress] = useState<string>("");
   const searchParams = useSearchParams();
   const subs = searchParams.get("subscribers");
-  console.log(subs)
+  // console.log(subs)
   // const service = searchParams.get("My");
-
+  const subscribe = process.env.NEXT_PUBLIC_TABLE_SUBSCRIBE || "";
 
   const [isPublish, setIsPublish] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -115,9 +118,34 @@ const InputForm = () => {
      setMyMassMails(owned?.results)
     }catch(err){console.log(err)}
   }
+
+  async function getMySubs (){
+    try{
+      if(!address)return
+      const extract: { id?: any } = await db
+        .prepare(`SELECT id FROM ${usersTable} WHERE ethAddress = ?;`)
+        .bind(address)
+        .first();
+      // console.log(extract?.id);
+     if(!extract?.id){
+      console.log("didnt got your id from usertable")
+      return
+     }
+      const owned : {results? : any} = await db
+      // .prepare(`SELECT * FROM ${channel};`) // for everything from the table
+      .prepare(`SELECT subscriber FROM ${subscribe} WHERE services = ?;`)
+      .bind(extract?.id)
+      .all();
+    // console.log(owned?.results);
+     setMysubs(owned?.results)
+    }catch(err){console.log(err)}
+  }
+
+
   
   useEffect(()=>{
     getMyData()
+    getMySubs()
   },[ address])
   return (
     <div
@@ -146,10 +174,17 @@ const InputForm = () => {
        See All Subscriber
         
       </Link>
+      <Link
+        href={`/marketers`}
+        className={` ${subs =='true' ? "block" : "hidden"}  mb-5 flex gap-4 items-center justify-center hover:bg-violet-400 hover:text-black  text-violet-300  py-2 px-4 transition-all duration-200 ease   rounded-xl`}
+        >
+       Back
+        
+      </Link>
           </div>
 
      {myMassMails[0]?.topic ? 
-       <div className={`w-full py-4 max-h-[70vh] overflow-y-scroll  pb-[20vh] scrollbar-hide`}>
+       <div className={`w-full py-4 max-h-[70vh] overflow-y-scroll  pb-[20vh] scrollbar-hide ${subs == 'true' ? "hidden" : 'block'}`}>
        
        { myMassMails.map((mail : IMass , idx : number)=>{
         return (
@@ -163,6 +198,12 @@ const InputForm = () => {
        })}
       </div> : <Loading/>}
 
+
+      {(mysubs[0].subscriber && subs == 'true')? mysubs.map( (subs : any , idx : number)=> <div key={idx} className={`${
+            idx % 2 === 0 ? "" : " bg-white/20"
+          } mb-4 py-1 pb-2 px-2 rounded-md  `}>
+           <p className={`text-base font-semibold `}>{subs.subscriber.toUpperCase()}</p> 
+          </div>) : null }
 
 
       <div
@@ -239,3 +280,8 @@ const InputForm = () => {
 };
 
 export default InputForm;
+
+/*
+
+  
+*/

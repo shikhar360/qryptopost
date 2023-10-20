@@ -79,7 +79,7 @@ export default function Navbar() {
             href={`/marketers`}
           >
             <p className=" cursor-pointer transition-all duration-200 ease-linear    px-4  rounded-md text-center ">
-            Marketers
+            MassMailing
             </p>
           </Link>
           <Link

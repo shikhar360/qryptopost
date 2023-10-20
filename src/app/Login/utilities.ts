@@ -18,6 +18,14 @@ export async function grantChannel(address : string){
   console.log("Access granted to Channels" + address);
   toast("Granted you Channel Access" );
 }
+export async function grantsubscribe(address : string){
+  const subs = process.env.NEXT_PUBLIC_TABLE_SUBSCRIBE || ""
+  const { results } = await Odb.prepare(`GRANT INSERT ON ${subs} TO '${address}';`).all();
+  // const {meta : inserted} =  await stmt.bind(address).all()
+  // const something = await inserted?.txn?.wait();
+  console.log("Access granted to Channels" + address);
+  toast("Granted you Channel Access" );
+}
 
 export async function clearall(){
   const tableName = process.env.NEXT_PUBLIC_TABLE_USER || ""
