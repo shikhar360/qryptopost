@@ -29,7 +29,7 @@ const ContactForm = () => {
         <div className="mb-4">
           <label className="block text-sm font-bold mb-2">Email</label>
           <input
-            className="shadow appearance-none border text-white bg-transparent rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border text-white bg-transparent rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
             type="email"
             placeholder="jhon@gmail.com"
             onChange={(e)=>setMailTo(e.target.value)}
