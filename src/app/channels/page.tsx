@@ -72,6 +72,18 @@ const Channel = () => {
         toast.error("Connect wallet");
         return;
       }
+      const check1: { ethAddress?: string; xmtped?: string } = await db
+        .prepare(`SELECT * FROM ${usersTable} WHERE ethAddress = ? ;`)
+        .bind(address)
+        .first();
+
+      // console.log(check);
+
+      if (!check1 || !check1?.ethAddress) {
+        toast.error("Login as a user first 🤖");
+        return;
+      }
+      
       setIsLoading(true);
       const stmt = db.prepare(
         `INSERT INTO ${subscribe} (subscriber , services) VALUES (?1, ?2)`

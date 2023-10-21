@@ -10,6 +10,8 @@
     "ci": "pnpm run lint && pnpm run build"
   },
   "dependencies": {
+    "@elasticemail/elasticemail-client": "^4.0.23",
+    "@emailjs/browser": "^3.11.0",
     "@lit-protocol/types": "^2.2.61",
     "@rainbow-me/rainbowkit": "^1.1.1",
     "@react-oauth/google": "^0.11.1",

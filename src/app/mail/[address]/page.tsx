@@ -186,6 +186,18 @@ const Sendbox = ({ params }: { params: { address: string } }) => {
       return;
     }
 
+    const check1: { ethAddress?: string; xmtped?: string } = await db
+        .prepare(`SELECT * FROM ${usersTable} WHERE ethAddress = ? ;`)
+        .bind(address)
+        .first();
+
+      // console.log(check);
+
+      if (!check1 || !check1?.ethAddress) {
+        toast.error("Login as a user first 🤖");
+        return;
+      }
+
     const check: { results?: any } = await db
       .prepare(`SELECT id FROM ${inbox} WHERE receiver = ?;`)
       .bind(address)
@@ -323,7 +335,7 @@ export default Sendbox;
       <div onClick={() => test2()}>test2</div>
       {/* <div onClick={()=>test2("hfF/6X+7Gqu3xc2mSMADO59DRXIZUPOfss/qDU0eBO1f2Oa6zSe16YMpsvL7hxjvj1OhGF6YZCRSmhZUaKlXOilfSWgyewB3ezhqfMysxxYgE26TGBYJDfpcMkizlMAn8ti6ABaA6i45grtCaLFbIfUD" , "368a693d784c7d1957ec748148a5de1e1f2e97f1f6360c69b0cfcf6471bbbf07")}>test2</div> 
 
-      
+
  // async function test (){
   //   try{
   //     // const date = new Date()
