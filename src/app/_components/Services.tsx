@@ -51,8 +51,7 @@ const Services = () => {
       })
       setAllSubs(data)
       setGsubs(data as any)
-      // console.log(allsubscription);
-      // setMailers(alldistinct)
+      
     } catch (err) {
       console.log(err);
     }
@@ -94,20 +93,6 @@ const Services = () => {
                 >
                  <span className={`w-full`}> {val.name ? val.name : val.ethaddress}</span>
                 </Link>)}
-                {/* <span
-                // href={`/mail?service=dsfjshd`}
-                onClick={()=>getsubscription()}
-                  className={` text-white py-2 px-4 w-[70%] text-sm text-center   hover:bg-white/5 my-2  rounded-xl mx-auto transition-all duration-150 ease-linear  `}
-                >
-                  testt
-                </span> */}
-                {/* <span
-                // href={`/mail?service=dsfjshd`}
-                onClick={()=>grantsubscribe(address)}
-                  className={` text-white py-2 px-4 w-[70%] text-sm text-center   hover:bg-white/5 my-2  rounded-xl mx-auto transition-all duration-150 ease-linear  `}
-                >
-                 grant
-                </span> */}
               </div>
             </div>
    </>

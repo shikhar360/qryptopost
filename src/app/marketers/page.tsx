@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
-import { channelpublish , grantChannel } from "../login/utilities";
 import { ToastContainer, toast, Flip } from "react-toastify";
 import { Database, Metadata } from "@tableland/sdk";
 import { useAccount } from "wagmi";
@@ -107,6 +106,7 @@ const InputForm = () => {
       // console.log(extract?.id);
      if(!extract?.id){
       console.log("didnt got your id from usertable")
+      toast.error("Didnt get your userId , PLZ login to keep going great 😅")
       return
      }
       const owned : {results? : any} = await db
