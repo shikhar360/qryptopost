@@ -231,7 +231,7 @@ const Mail = () => {
       .bind(+read)
       .all();
 
-      console.log(results , read)
+      // console.log(results , read)
       
       if (results) {
         const data: unknown[] = results;
@@ -445,7 +445,7 @@ const Mail = () => {
             //  prefetch={false}
             //  href={ {pathname :`/mail/[address]` , query : {address : address} }}
              
-              className="bg-[#8338ec] text-white py-2 px-4 w-full text-xl my-3 hover:-translate-y-1 hover:shadow-xl
+              className="bg-[#8338ec] text-center text-white py-2 px-4 w-full text-xl my-3 hover:-translate-y-1 hover:shadow-xl
                hover:shadow-black rounded-r-full transition-all duration-150 ease-linear"
             >
               Send Mail 📮
@@ -490,14 +490,15 @@ const Mail = () => {
               >
                 TableBox
               </span>
-              <span
+              <Link
+              href={`/chat`}
                 className={`flex-1  text-center py-2 bg-black cursor-pointer  text-xs text-white hover:text-white`}
               >
                 Gaseless Mails - XMTP
-              </span>
+              </Link>
             </div>
 
-          <div className={` w-full h-full ${service ? "hidden" : "block"}`}>
+          <div className={` w-full min-h-full ${service ? "hidden" : "block"}`}>
 
           
 

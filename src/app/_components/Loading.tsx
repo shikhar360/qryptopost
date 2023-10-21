@@ -4,7 +4,7 @@ export default function Loading({ simple = false , w = 'w-10' }: any) {
       {!simple && (
         <div
           role="status"
-          className="w-full flex flex-grow items-center justify-center bg-black/50"
+          className="w-full flex flex-grow min-h-full items-center justify-center bg-black/50"
         >
           <svg
             aria-hidden="true"

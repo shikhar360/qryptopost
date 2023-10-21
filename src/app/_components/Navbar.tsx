@@ -89,6 +89,13 @@ export default function Navbar() {
             Services
             </p>
           </Link>
+          <Link
+            href={`/chat`}
+          >
+            <p className=" cursor-pointer transition-all duration-200 ease-linear    px-4  rounded-md text-center ">
+            GasLess Chat
+            </p>
+          </Link>
           <Link href={"/invite"}>
             <p className=" cursor-pointer transition-all duration-200 ease-linear    px-4 rounded-md text-center   ">
              Invite

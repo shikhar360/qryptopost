@@ -50,8 +50,8 @@ const Services = () => {
        })
       })
       setAllSubs(data)
-      setGsubs(data)
-      console.log(allsubscription);
+      setGsubs(data as any)
+      // console.log(allsubscription);
       // setMailers(alldistinct)
     } catch (err) {
       console.log(err);

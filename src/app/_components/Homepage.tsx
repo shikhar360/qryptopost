@@ -3,6 +3,7 @@ import Powered from './Powered'
 import Feature from './Feature';
 import FAQ from './FAQ';
 import Hero from './Hero';
+import Link from "next/link";
 
 const Homepage = () => {
   return (
@@ -12,7 +13,7 @@ const Homepage = () => {
       <section className={`w-[96%] md:w-[90%] z-30 min-h-[85vh] flex flex-col items-start justify-start px-20  bg-[#8338ec] text-white mt-40 pt-20 pb-10 rounded-[4rem] font-mooli relative`}>
        <p className={`text-5xl w-[70%] tracking-wider font-bold leading-normal`}>Elevate Your Emailing Experience with Web3 Magic</p>
        <p className={`mt-7  w-[40%] text-white/70 text-xl`}>Web3-powered email for tomorrow&apos;s seamless communication experience, generating sales, closing clients and many more </p>
-       <button className={`bg-[#64FCDA] rounded-full px-8 py-3  mt-6 text-white font-semibold `}>TRY OUT NOW</button>
+       <Link href={`/mail`} className={`bg-[#64FCDA] rounded-full px-8 py-3  mt-6 text-black font-semibold `}>TRY OUT NOW</Link>
        <p className={`text-6xl w-full  text-[#64FCDA] tracking-wide font-extrabold leading-normal mt-auto text-center`}>Powerfull Mailing </p>
        <img src="/img/mail.png" alt="mailbox" className={`float-right  w-[40%] absolute right-3 bottom-12   select-none`} draggable='false' />
        <img src="/img/post1.png" alt="mailbox" className={`  w-[4rem] absolute mix-blend-screen invert right-10 top-20 animate-bounce   select-none`} draggable='false' />
@@ -25,7 +26,9 @@ const Homepage = () => {
        <div className={`px-20`}>
         <h1 className={`text-4xl text-[#64FCDA] font-bold mb-5`}>Embark on a Web3 Odyssey with Qryptopost</h1>
         <p className={`text-white/80 text-sm`}>Our Web3-powered platform brings unparalleled security and innovation to your inbox. Say goodbye to outdated communication methods and embrace a seamless, next-generation emailing experience. Join us and be at the forefront of the digital communication revolution. Get started now!</p>
-        <button className={`bg-[#64FCDA] rounded-full px-8 py-3  mt-6 text-white font-semibold `}>IT&apos;S FREE</button>
+        <br/>
+        <br/>
+        <Link href={`/mail`} className={`bg-[#64FCDA] rounded-full px-8 py-3  mt-6 text-black font-semibold `}>IT&apos;S FREE</Link>
        </div>
       </section>
      <FAQ/>
