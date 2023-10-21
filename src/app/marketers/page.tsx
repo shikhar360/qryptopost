@@ -186,7 +186,7 @@ const InputForm = () => {
      {myMassMails[0]?.topic ? 
        <div className={`w-full py-4 max-h-[70vh] overflow-y-scroll  pb-[20vh] scrollbar-hide ${subs == 'true' ? "hidden" : 'block'}`}>
        
-       { myMassMails.map((mail : IMass , idx : number)=>{
+       { myMassMails?.map((mail : IMass , idx : number)=>{
         return (
           <div key={idx} className={`${
             idx % 2 === 0 ? "" : " bg-white/20"
@@ -196,10 +196,10 @@ const InputForm = () => {
           </div>
         )
        })}
-      </div> : <Loading/>}
+      </div> : <Loading maybe={true}/>}
 
 
-      {(mysubs[0].subscriber && subs == 'true')? mysubs.map( (subs : any , idx : number)=> <div key={idx} className={`${
+      {(mysubs[0]?.subscriber && subs == 'true')? mysubs.map( (subs : any , idx : number)=> <div key={idx} className={`${
             idx % 2 === 0 ? "" : " bg-white/20"
           } mb-4 py-1 pb-2 px-2 rounded-md  `}>
            <p className={`text-base font-semibold `}>{subs.subscriber.toUpperCase()}</p> 

@@ -149,7 +149,6 @@ const Login = () => {
 
         <div className="md:w-[60%] w-[95%] bg-stone-800 flex flex-col items-center justify-start px-4 py-8 rounded-xl shadow-lg shadow-black/120">
           <p
-            onClick={() => getAll()}
             className="text-white mb-8 text-start text-2xl  w-[80%]  px-4  rounded-sm h-8 "
           >
             Signup

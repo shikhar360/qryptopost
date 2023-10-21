@@ -108,7 +108,7 @@ const Channel = () => {
     <div className="pt-24 bg-[#240046] min-h-screen overflow-hidden ">
       {/* <button onClick={()=>getCount()}>test</button> */}
       <div className="grid grid-cols-4 max-h-[90%] w-[80%] mx-auto overflow-y-scroll gap-y-5 scrollbar-hide">
-        {mailers.map((mailer: IMailer, idx: number) => (
+        {mailers?.map((mailer: IMailer, idx: number) => (
           <div
             key={idx}
             className={`col-span-4 md:col-span-1 min-h-[10rem]  w-[90%] mx-auto rounded-xl py-3 px-2 ${
@@ -118,7 +118,7 @@ const Channel = () => {
             <div className="flex flex-col items-center ">
               {/* {mailer.services == 'undefined' ? null : <img src={mailer.services} className={`w-16 rounded-full `} alt={'user'}/>} */}
               <span>
-                {mailer.name ? mailer.name.toUpperCase() : mailer.ethAddress}
+                {mailer?.name ? mailer.name.toUpperCase() : mailer.ethAddress}
               </span>
               <span className={`w-full truncate text-center mt-2`}>
                 {count} Subscriber
@@ -126,7 +126,7 @@ const Channel = () => {
               <button
                 disabled={
                   isLoading ||
-                  allSubs.some((val: any) => val.sub_id == mailer.id)
+                  allSubs?.some((val: any) => val.sub_id == mailer.id)
                 }
                 onClick={() => subscribeTo(mailer.id)}
                 className={`mt-8 py-1 px-3  rounded-xl ${
@@ -138,7 +138,7 @@ const Channel = () => {
                 {isLoading ? (
                   <Loading w={"w-10"} simple={true} />
                 ) : (
-                  "Subscribed"
+                  "Subscribe"
                 )}
               </button>
             </div>

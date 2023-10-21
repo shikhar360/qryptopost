@@ -302,11 +302,11 @@ const Mail = () => {
     try {
       console.log("the deb", debouncedValue);
 
-      const response = await axios(
+      const response = await fetch(
         `https://api.web3.bio/profile/${debouncedValue}`
       );
       //  const response = await fetch("http://example.com/movies.json");
-      const data = await response.data;
+      const data = await response.json();
       // console.log(data);
       setMaskData(data);
     } catch (err) {
@@ -318,7 +318,7 @@ const Mail = () => {
 
   useEffect(() => {
     getMaskData();
-  }, [debouncedValue, inputValue]);
+  }, [debouncedValue ]);
 
   // console.log(maillink)
   // console.log(maskData)
@@ -558,7 +558,10 @@ const Mail = () => {
                   </div>
                 </div>
               ) : read ? null : (
-                <Loading />
+              
+
+                <Loading maybe={true} />
+
               )}
             </div>
 

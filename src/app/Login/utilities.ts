@@ -29,10 +29,18 @@ export async function grantsubscribe(address : string){
 
 export async function clearall(){
   const tableName = process.env.NEXT_PUBLIC_TABLE_USER || ""
+  const inbox= process.env.NEXT_PUBLIC_TABLE_INBOX || ""
+  const reply = process.env.NEXT_PUBLIC_TABLE_REPLYBOX || ""
+  const subscribe = process.env.NEXT_PUBLIC_TABLE_SUBSCRIBE || ""
+  const channel = process.env.NEXT_PUBLIC_TABLE_CHANNEL || ""
   const { results } = await Odb.prepare(`DELETE FROM ${tableName};`).all();
+  const { results :ib } = await Odb.prepare(`DELETE FROM ${inbox};`).all();
+  const { results : re } = await Odb.prepare(`DELETE FROM ${reply};`).all();
+  const { results : sub } = await Odb.prepare(`DELETE FROM ${subscribe};`).all();
+  const { results : ch } = await Odb.prepare(`DELETE FROM ${channel};`).all();
   // const {meta : inserted} =  await stmt.bind(address).all()
   // const something = await inserted?.txn?.wait();
-  console.log("deleted everything from usertable----" );
+  console.log("deleted everything from Everydatabase" );
 }
 
 export async function grantInsert(address : string){

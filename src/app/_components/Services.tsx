@@ -85,7 +85,7 @@ const Services = () => {
                   seeServices ? "translate-y-0 " : "-translate-y-[110%] "
                 } z-10   transition-all duration-300 ease-linear`}
               >
-               {allsubs[0].ethaddress && allsubs.map((val: ISubs , idx : number) =>
+               {allsubs[0]?.ethaddress && allsubs?.map((val: ISubs , idx : number) =>
                <Link
                key={idx}
                 href={`/mail?service=${val.sub_id}`}

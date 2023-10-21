@@ -1,11 +1,13 @@
-export default function Loading({ simple = false , w = 'w-10' }: any) {
+export default function Loading({ simple = false , w = 'w-10' , maybe = false }: any) {
   return (
     <>
       {!simple && (
         <div
           role="status"
-          className="w-full flex flex-grow min-h-full items-center justify-center bg-black/50"
+          className="w-full flex flex-col flex-grow min-h-full items-center justify-center bg-black/50"
         >
+
+         {maybe && <div className="w-full text-4xl font-jakarta mb-10 justify-center text-center ">Maybe you Dont have any Emails</div>}
           <svg
             aria-hidden="true"
             className={` ${w} h-10 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-violet-500`}
